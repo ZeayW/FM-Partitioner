@@ -484,7 +484,7 @@ void FMAlgorithm(){
     while (!flag && count++ < ccnt){
         // 
         Cell * a = findMaxGain(0), * b = findMaxGain(1);
-        if (!afccnt && ! bfccnt){
+        //if (!afccnt && ! bfccnt){
         if (a!=NULL && b!=NULL){
             
             //Cell * a = findMaxGain(0), * b = findMaxGain(1);
