@@ -494,5 +494,4 @@ int main(int argc, char *argv[]){
     cout << endl;
     cout << "FM Algorithm Run Time: " << (double)(tend-tstart)/CLOCKS_PER_SEC << " sec\n";
     cout << "Total Run Time: " << (double)clock()/CLOCKS_PER_SEC << " sec\n";
-    
 }
