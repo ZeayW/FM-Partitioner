@@ -102,39 +102,6 @@ void countCutSize(){
 }
 
 
-void test(){
-    for (int i = 0; i < ccnt; i++){
-        cout << cells[i]->name << " s"
-	     << cells[i]->size << " g"
-             << cells[i]->gain << " ab"
-	     << cells[i]->set  << " p"
-	     << cells[i]->pins << " l"
-	     << cells[i]->lock << ' ';
-	for (int j = 0; j < cells[i]->netList.size(); j++){
-	    int id = cells[i]->netList[j];
-	    cout << nets[id]->name << ' ';
-        }
-	cout << endl;
-    }
-    cout << "...\n";
-    cout << "# of cells = " << ccnt << endl;
-    cout << "Total Cell Size = " << totalCellsize << endl;
-    cout << "Set A Size = " << aCellsize << endl;
-    cout << "Set B Size = " << bCellsize << endl;
-    cout << "|A - B| = " << abs(aCellsize-bCellsize) << endl;
-    cout << "...\n";
-    for (int i = 0; i < ncnt; i++){
-        cout << nets[i]->name << ' ';
-        for (int j = 0; j < nets[i]->cellList.size(); j++){
-            int id = nets[i]->cellList[j];
-            cout << cells[id]->name << ' ';
-        }
-        cout << endl;
-    }
-    cout << "...\n";
-    return;
-}
-
 //calculate Pmax to intialize the bucket list
 void countPmax(){
     for (int i = 0; i < ccnt; i++)
@@ -187,25 +154,6 @@ void parseInput(int argc, char ** argv){
                 exit(EXIT_FAILURE);
         }
     }
-
-}
-
-
-void traverse(){
-    
-    for (int k = 0; k < 2; k++){
-        cout << "---- " << ((!k) ? "A" : "B") << " ----\n";
-        for (int i = Pmax ; i >= -Pmax; i--){
-            cout << '[' << i << ']' << ' ';
-            Node *trav = bucketlist[k][i]->next;
-            while (trav != NULL){
-                cout << cells[trav->id]->name << "->";
-                trav = trav->next;
-            }
-            cout << endl;
-        }
-    }
-
 
 }
 
