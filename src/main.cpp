@@ -112,13 +112,13 @@ void parseInput(int argc, char ** argv){
     char* cellFile = argv[1];
     char* netFile = argv[2];
     char* outputFile = argv[3];
-    ifsCell.open(optarg, ios::in);
+    ifsCell.open(cellFile, ios::in);
     if (!ifsCell.is_open())
         cout << "Cannot open the cells file: " << cellFile << endl;		
-    ifsNet.open(optarg, ios::in);
+    ifsNet.open(netFile, ios::in);
     if (!ifsNet.is_open())
         cout << "Cannot open the nets file at [-" << netFile << endl;		
-    of.open(optarg, ios::out);
+    of.open(outputFile, ios::out);
     if (!of.is_open())
         cout << "Cannot open the output file at [-" << outputFile << endl;		
     
