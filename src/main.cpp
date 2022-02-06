@@ -480,6 +480,7 @@ void FMAlgorithm(){
             else flag = true;
         }
         else {
+            cout<<"wierd, count = "<<count<<endl;
             Cell * a = findMaxGain(0), * b = findMaxGain(1);
             if (a->gain >= b->gain) {
                 if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
