@@ -459,7 +459,6 @@ void FMAlgorithm(){
         
         restore();
         cout << "Iter " << iter << ", Gains: " << bestg << endl;
-        cout << endl;
         if (iter>=40){
             return;
         }
