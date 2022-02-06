@@ -490,33 +490,6 @@ void FMAlgorithm(){
     else { bestk = -1; k = -1; return;}
 }
 
-// adjust the sets to be balanced
-void adjust(){
-    if (abs(aCellsize-bCellsize) < error) return;
-    else {
-        cout << "...Need balancing.\n";
-        int i;
-        for (i = 0; i < ccnt && abs(aCellsize-bCellsize) >= error; i++){
-            Cell * c = cells[i];
-            // if |A|>|B| and c belong to A , then move c to B
-            if (aCellsize > bCellsize && !c->set){
-                aCellsize -= c->size;
-                bCellsize += c->size;
-                c->set = true;
-            }
-            else if (aCellsize < bCellsize && c->set){
-                aCellsize += c->size;
-                bCellsize -= c->size;
-                c->set = false;
-            }
-        }
-        if (i == ccnt && abs(aCellsize-bCellsize) >= error) {
-            cerr << "(ERROR)...This testcase can never be balanced!\n";
-            //exit(EXIT_FAILURE);
-        }
-    }
-}
-
 
 int main(int argc, char *argv[]){
     cout<<"hello"<<endl;
@@ -534,10 +507,11 @@ int main(int argc, char *argv[]){
     countCutSize();
     cout << "Initial Cut Size = " << cs << endl;
     cout << endl;
-    countError();
-    countPmax();
-    //adjust();
-    
+
+    error = (double) totalCellsize/10;
+    for (int i = 0; i < ccnt; i++)
+        if (cells[i]->pins > Pmax) Pmax = cells[i]->pins;
+
     bestaCellsize = aCellsize;
     bestbCellsize = bCellsize;
     tstart = clock();
