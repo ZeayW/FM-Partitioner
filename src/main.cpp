@@ -95,6 +95,7 @@ void parseNets(istream & in){
     }
 }
 
+
 void parse(int argc, char ** argv){
     char* cellFile = argv[1];
     char* netFile = argv[2];
@@ -480,15 +481,15 @@ int main(int argc, char *argv[]){
         if (nets[i]->A && nets[i]->B) cutsz++;
     cout << "Final Cut Size = " << cutsz << endl;
     //output the results
-    out << "cut_size " << cutsz << endl;
-    out << "A " << aCellCnt << endl;
+    of << "cut_size " << cutsz << endl;
+    of << "A " << aCellCnt << endl;
     for (int i = 0; i < ccnt; i++)
         if (!cells[i]->set)
-            out << cells[i]->name << endl;
-    out << "B " << bCellCnt << endl;
+            of << cells[i]->name << endl;
+    of << "B " << bCellCnt << endl;
     for (int i = 0; i < ccnt; i++)
         if (cells[i]->set)
-            out << cells[i]->name << endl;
+            of << cells[i]->name << endl;
     of.close();
     cout << endl;
     cout << "FM Algorithm Run Time: " << (double)(tend-tstart)/CLOCKS_PER_SEC << " sec\n";
