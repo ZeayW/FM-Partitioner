@@ -418,6 +418,7 @@ bool isValid(bool set,int sz){
         return abs(bCellsize-aCellsize-2*sz) < error;
     }
 }
+
 void FMAlgorithm(){
     bool flag = false;
     initGain();
@@ -535,7 +536,7 @@ int main(int argc, char *argv[]){
     cout << endl;
     countError();
     countPmax();
-    adjust();
+    //adjust();
     
     bestaCellsize = aCellsize;
     bestbCellsize = bCellsize;
