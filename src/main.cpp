@@ -1,3 +1,6 @@
+#include "net.h"
+#include "cell.h"
+#include <ctime>
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -5,12 +8,10 @@
 #include <ctype.h>
 #include <set>
 #include <map>
+#include <cmath>
 #include <list>
 #include <vector>
-#include <cmath>
-#include "net.h"
-#include "cell.h"
-#include <ctime>
+
 
 using namespace std;
 
