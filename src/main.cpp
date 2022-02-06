@@ -30,7 +30,7 @@ ifstream ifc, ifn;
 ofstream of;
 double error; 
 int tcsz = 0, acsz = 0, bcsz = 0, cs = 0;
-int accnt = 0, bccnt = 0, afccnt = 0, bfccnt = 0, accg = 0, bestg = 0;
+int accnt = 0, bccnt = 0, accg = 0, bestg = 0;
 
 int bestacnnt = 0, bestbcnnt = 0, bestacsz = 0, bestbcsz = 0;
 int Pmax = 0;
@@ -321,8 +321,7 @@ void initGain(){
     
     accg = 0;
     store();
-    afccnt = accnt;
-    bfccnt = bccnt;
+
     // for each cell, init its gain
     for (int i = 0; i < ccnt; i++){
         // for each net n on cell i, check if n is critical
@@ -410,7 +409,6 @@ void updateGain(Cell * c){
         remove(c);
         acsz -= c->size;
         bcsz += c->size;
-        afccnt--;
         accnt--;
         bccnt++;
     }
@@ -463,7 +461,6 @@ void updateGain(Cell * c){
         remove(c);
         bcsz -= c->size;
         acsz += c->size;
-        bfccnt--;
         bccnt--;
         accnt++;
     }
@@ -484,10 +481,8 @@ void FMAlgorithm(){
     while (!flag && count++ < ccnt){
         // 
         Cell * a = findMaxGain(0), * b = findMaxGain(1);
-        //if (!afccnt && ! bfccnt){
+        
         if (a!=NULL && b!=NULL){
-            
-            //Cell * a = findMaxGain(0), * b = findMaxGain(1);
             if (a->gain >= b->gain) {
                 int n = 0;
                 while(abs(acsz-bcsz-2*a->size) >= error && a->to->next!=NULL && n++<=3){
@@ -508,7 +503,6 @@ void FMAlgorithm(){
             }
         }
         else if (a==NULL){
-            //Cell * b = findMaxGain(1);
             int n = 0;
             while(abs(bcsz-acsz-2*b->size) >= error && b->to->next!=NULL ){
                 b = vc[b->to->next->id];
@@ -517,7 +511,6 @@ void FMAlgorithm(){
             else flag = true;
         }
         else {
-            //Cell * a = findMaxGain(0);
             // check if balance
             int n = 0;
             while(abs(acsz-bcsz-2*a->size) >= error && a->to->next!=NULL){
