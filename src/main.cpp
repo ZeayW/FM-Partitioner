@@ -484,18 +484,18 @@ void FMAlgorithm(){
             Cell * a = findMaxGain(0), * b = findMaxGain(1);
             if (a->gain >= b->gain) {
                 int n = 0;
-                while(abs(acsz-bcsz-2*a->size) >= error && a->to->next!=NULL ){
-                    a = vc[a->to->next->id];
-                }
+                //while(abs(acsz-bcsz-2*a->size) >= error && a->to->next!=NULL ){
+                //    a = vc[a->to->next->id];
+                //}
                 if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
                 else if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
                 else flag = true;
             }
             else {
-                 int n = 0;
-                while(abs(bcsz-acsz-2*b->size) >= error && b->to->next!=NULL){
-                    b = vc[b->to->next->id];
-                }
+                int n = 0;
+                //while(abs(bcsz-acsz-2*b->size) >= error && b->to->next!=NULL){
+                //    b = vc[b->to->next->id];
+                //}
                 if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
                 else if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
                 else flag = true;
