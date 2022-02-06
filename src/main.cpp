@@ -108,13 +108,19 @@ void outputFile(ostream & out){
 }
 
 
-void parseInput(int argc, char ** argv){
+void parseArg(int argc, char ** argv){
     char* cellFile = argv[1];
     char* netFile = argv[2];
     char* outputFile = argv[3];
     ifsCell.open(cellFile, ios::in);
-    if (!ifsCell.is_open())
+    if (!ifsCell.is_open()){
         cout << "Cannot open the cells file: " << cellFile << endl;		
+        exit();
+    }
+    else{
+        parseCells(ifsCell);
+    }
+    ifsCell.close();
     ifsNet.open(netFile, ios::in);
     if (!ifsNet.is_open())
         cout << "Cannot open the nets file at [-" << netFile << endl;		
@@ -461,10 +467,7 @@ int main(int argc, char *argv[]){
     cout<<"hello"<<endl;
     ios_base::sync_with_stdio(false);
 	
-    parseInput(argc, argv);
-    if (ifsCell.is_open()) parseCells(ifsCell);
-    else parseCells(cin);
-    ifsCell.close();
+    parseArg(argc, argv);
 
     if (ifsNet.is_open()) parseNets(ifsNet);
     else parseNets(cin);
