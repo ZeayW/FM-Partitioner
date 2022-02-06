@@ -475,6 +475,7 @@ int main(int argc, char *argv[]){
    
     parse(argc, argv);
 
+    // calculate intial cut size
     cutsz = 0;
     for (int i = 0; i < ncnt; i++)
         if (nets[i]->A && nets[i]->B) cutsz++;
@@ -495,8 +496,7 @@ int main(int argc, char *argv[]){
     for (int i = 0; i < ncnt; i++)
         if (nets[i]->A && nets[i]->B) cutsz++;
     cout << "Final Cut Size = " << cutsz << endl;
-    if (of.is_open()) outputFile(of);
-    else outputFile(cout);
+    outputFile(of);
     of.close();
     cout << endl;
     cout << "FM Algorithm Run Time: " << (double)(tend-tstart)/CLOCKS_PER_SEC << " sec\n";
