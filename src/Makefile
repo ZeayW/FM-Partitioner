@@ -8,7 +8,7 @@ CFLAGS=
 LDFLAGS=-std=c++11 -O3 -lm
 SOURCES=main.cpp
 OBJECTS=$(SOURCES:.c=.o)
-EXECUTABLE=hw1
+EXECUTABLE=../bin/hw1
 INCLUDES=cell.h net.h
 
 all: $(SOURCES) $(EXECUTABLE)
