@@ -480,7 +480,7 @@ void FMAlgorithm(){
             else flag = true;
         }
         k++;
-        continue
+        continue;
         if (!bfccnt){
             //cout<<"a "<<count<<" "<<afccnt<<endl;
             Cell * a = findMaxGain(0);
