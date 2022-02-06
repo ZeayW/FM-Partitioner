@@ -410,7 +410,7 @@ void updateGain(Cell * c){
 
 int pass = 0;
 
-bool isValid(int set,int sz){
+bool isValid(bool set,int sz){
     if (set){
         return abs(aCellsize-bCellsize-2*sz) < error;
     }
