@@ -222,43 +222,33 @@ Cell * findMaxGain(bool set){
 void reverse(){
     int i = cellstack.size()-1;
     for (; i > k; i--)
-        //cout << cellstack[i] << " ";
         cells[cellstack[i]]->set = !cells[cellstack[i]]->set;
     
 }
 
 void store(){
     bestg = aGain;
-    //bestcells = &cells;
-    //bestnets = &nets;
     bestacnnt = aCellCnt;
     bestbcnnt = bCellCnt;
     bestaCellsize = aCellsize;
     bestbCellsize = bCellsize;
-    //bestset.clear();
-    //bestA.clear();
-    //bestB.clear();
     bestk = k;
-    //for (int i = 0 ; i < ccnt; i++)
-    //    bestset[i] = cells[i]->set;
+
 }
 
 
 
 void restore(){
-    //cells = *bestcells;
-    //nets = *bestnets;
+
     k = bestk;
-    //cout << k;
     aCellCnt = bestacnnt;
     bCellCnt = bestbcnnt;
     aCellsize = bestaCellsize;
     bCellsize = bestbCellsize;
-    //for (int i = 0 ; i < ccnt; i++)
-    //    cells[i]->set = bestset[i];
+
     reverse();
     calAB();
-    //cout << "???\n";
+
 }
 
 
@@ -420,6 +410,14 @@ void updateGain(Cell * c){
 
 int pass = 0;
 
+bool isValid(set,sz){
+    if (set){
+        return abs(aCellsize-bCellsize-2*sz) < error;
+    }
+    else{
+        return abs(bCellsize-aCellsize-2*sz) < error;
+    }
+}
 void FMAlgorithm(){
     bool flag = false;
     initGain();
@@ -439,8 +437,8 @@ void FMAlgorithm(){
                 while(abs(aCellsize-bCellsize-2*a->size) >= error && a->to->next!=NULL && n++<=thred_n){
                     a = cells[a->to->next->id];
                 }
-                if (abs(aCellsize-bCellsize-2*a->size) < error) updateGain(a);
-                else if (abs(bCellsize-aCellsize-2*b->size) < error) updateGain(b);
+                if (isValid(0,a->size)) updateGain(a);
+                else if (isValid(1,b->size)) updateGain(b);
                 else flag = true;
             }
             else {
