@@ -30,7 +30,7 @@ ifstream ifc, ifn;
 ofstream of;
 double error; 
 int tcsz = 0, acsz = 0, bcsz = 0, cs = 0;
-int accnt = 0, bccnt = 0, accg = 0, bestg = 0;
+int aCellCnt = 0, bCellCnt = 0, accg = 0, bestg = 0;
 
 int bestacnnt = 0, bestbcnnt = 0, bestacsz = 0, bestbcsz = 0;
 int Pmax = 0;
@@ -46,13 +46,13 @@ void parseCells(istream & in){
             Cell *c = new Cell(str, size, 0, ccnt);
             vc.push_back(c);
             acsz += size;
-            accnt++;
+            aCellCnt++;
         }
         else {
             Cell *c = new Cell(str, size, 1, ccnt);
             vc.push_back(c);
             bcsz += size;
-            bccnt++;
+            bCellCnt++;
         }
         tcsz += size; 
         ccnt++;
@@ -147,11 +147,11 @@ void countError(){
 
 void outputFile(ostream & out){
     out << "cut_size " << cs << endl;
-    out << "A " << accnt << endl;
+    out << "A " << aCellCnt << endl;
     for (int i = 0; i < ccnt; i++)
         if (!vc[i]->set)
             out << vc[i]->name << endl;
-    out << "B " << bccnt << endl;
+    out << "B " << bCellCnt << endl;
     for (int i = 0; i < ccnt; i++)
         if (vc[i]->set)
             out << vc[i]->name << endl;
@@ -282,8 +282,8 @@ void store(){
     bestg = accg;
     //bestvc = &vc;
     //bestvn = &vn;
-    bestacnnt = accnt;
-    bestbcnnt = bccnt;
+    bestacnnt = aCellCnt;
+    bestbcnnt = bCellCnt;
     bestacsz = acsz;
     bestbcsz = bcsz;
     //bestset.clear();
@@ -301,8 +301,8 @@ void restore(){
     //vn = *bestvn;
     k = bestk;
     //cout << k;
-    accnt = bestacnnt;
-    bccnt = bestbcnnt;
+    aCellCnt = bestacnnt;
+    bCellCnt = bestbcnnt;
     acsz = bestacsz;
     bcsz = bestbcsz;
     //for (int i = 0 ; i < ccnt; i++)
@@ -409,8 +409,8 @@ void updateGain(Cell * c){
         remove(c);
         acsz -= c->size;
         bcsz += c->size;
-        accnt--;
-        bccnt++;
+        aCellCnt--;
+        bCellCnt++;
     }
     else {
         int szn = c->netList.size();
@@ -461,8 +461,8 @@ void updateGain(Cell * c){
         remove(c);
         bcsz -= c->size;
         acsz += c->size;
-        bccnt--;
-        accnt++;
+        bCellCnt--;
+        aCellCnt++;
     }
     if (accg > bestg)
         store();
