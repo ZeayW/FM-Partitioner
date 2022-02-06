@@ -262,7 +262,7 @@ Cell * findMaxGain(bool set){
     // find the max gain (find the first list that is not empty)
     while (p >= -Pmax && blist[set][p]->next == NULL){p--;}
     // find the first cell with maximum gain
-    if (p==-Pmax){
+    if (p<-Pmax){
         return NULL;
     }
     Cell * ans = vc[blist[set][p]->next->id];
