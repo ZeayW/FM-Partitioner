@@ -26,7 +26,7 @@ map <string, int> cell2id, net2id;
 int ccnt = 0, ncnt = 0;
 
 int cutSize = 0;
-ifstream ifc, ifn;
+ifstream ifsCell, ifsNet;
 ofstream of;
 double error; 
 int totalCellsize = 0, aCellsize = 0, bCellsize = 0, cs = 0;
@@ -163,13 +163,13 @@ void parseInput(int argc, char ** argv){
     while ((opt = getopt(argc, argv, "c:n:o:h?")) != -1){
         switch (opt){
             case 'c':
-                ifc.open(optarg, ios::in);
-                if (!ifc.is_open())
+                ifsCell.open(optarg, ios::in);
+                if (!ifsCell.is_open())
                     cout << "Cannot open the cells file at [-" << opt << ' ' << optarg << ']' << endl;		
                 break;
             case 'n':
-                ifn.open(optarg, ios::in);
-                if (!ifn.is_open())
+                ifsNet.open(optarg, ios::in);
+                if (!ifsNet.is_open())
                     cout << "Cannot open the nets file at [-" << opt << ' ' << optarg << ']' << endl;		
                 break;
             case 'o':
@@ -574,13 +574,13 @@ int main(int argc, char *argv[]){
     ios_base::sync_with_stdio(false);
 	
     parseInput(argc, argv);
-    if (ifc.is_open()) parseCells(ifc);
+    if (ifsCell.is_open()) parseCells(ifsCell);
     else parseCells(cin);
-    ifc.close();
+    ifsCell.close();
 
-    if (ifn.is_open()) parseNets(ifn);
+    if (ifsNet.is_open()) parseNets(ifsNet);
     else parseNets(cin);
-    ifn.close();
+    ifsNet.close();
     //bestset = new bool[ccnt]();
     countCutSize();
     cout << "Initial Cut Size = " << cs << endl;
