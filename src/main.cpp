@@ -121,12 +121,20 @@ void parseArg(int argc, char ** argv){
         parseCells(ifsCell);
     }
     ifsCell.close();
+
     ifsNet.open(netFile, ios::in);
-    if (!ifsNet.is_open())
-        cout << "Cannot open the nets file at [-" << netFile << endl;		
+    if (!ifsNet.is_open()){
+        cerr << "Cannot open the nets file at [-" << netFile << endl;	
+        exit(-1);
+    }
+    else{
+        parseNets(ifsNet);
+    }
+    ifsNet.close();
+
     of.open(outputFile, ios::out);
     if (!of.is_open())
-        cout << "Cannot open the output file at [-" << outputFile << endl;		
+        cerr << "Cannot open the output file at [-" << outputFile << endl;		
     
 }
 
@@ -469,9 +477,6 @@ int main(int argc, char *argv[]){
 	
     parseArg(argc, argv);
 
-    if (ifsNet.is_open()) parseNets(ifsNet);
-    else parseNets(cin);
-    ifsNet.close();
     //bestset = new bool[ccnt]();
     cutsz = 0;
     for (int i = 0; i < ncnt; i++)
