@@ -486,7 +486,7 @@ void FMAlgorithm(){
         Cell * a = findMaxGain(0), * b = findMaxGain(1);
         
         if (a!=NULL && b!=NULL){
-            cout<<"aa"<<endl;
+            
             //Cell * a = findMaxGain(0), * b = findMaxGain(1);
             if (a->gain >= b->gain) {
                 int n = 0;
