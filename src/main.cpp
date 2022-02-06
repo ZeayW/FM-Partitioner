@@ -225,6 +225,7 @@ void insert_front(Cell * c){
         pre = pre->next;
         cur = cur->next;
     }
+    cout<<p->id<<endl;
     p->prev = pre;
     p->next = cur;
     pre->next = p;
