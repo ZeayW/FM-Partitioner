@@ -219,9 +219,19 @@ void insert_front(Cell * c){
     int gain = c->gain;
     bool set = c->set;
     Node *p = c->to;
-    p->prev = blist[set][gain];
-    p->next = blist[set][gain]->next;
-    blist[set][gain]->next = p;
+    Node *pre = blist[set][gain];
+    Node* cur = blist[set][gain]->next;
+    while(cur!=NULL && vc[cur->id]->size<=c->size){
+        pre = pre->next;
+        cur = cur->next;
+    }
+    p->prev = pre;
+    p->next = cur;
+    pre->next = p;
+    
+    //p->prev = blist[set][gain];
+    //p->next = blist[set][gain]->next;
+    //blist[set][gain]->next = p;
     if (p->next != NULL) p->next->prev = p;
 }
 
@@ -468,30 +478,8 @@ void FMAlgorithm(){
     cellstack.clear();
     while (!flag && count++ < ccnt){
         // 
-        if (true){
+        if (afccnt && bfccnt){
             Cell * a = findMaxGain(0), * b = findMaxGain(1);
-            if (a == NULL){
-                if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
-                else flag = true;
-            }
-            else if (b == NULL){
-                if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
-                else flag = true;
-            }
-            else{
-                if (a->gain >= b->gain) {
-                    if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
-                    else if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
-                    else flag = true;
-                }
-                else {
-                    if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
-                    else if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
-                    else flag = true;
-                }
-            }
-
-            continue;
             if (a->gain >= b->gain) {
                 if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
                 else if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
@@ -514,7 +502,8 @@ void FMAlgorithm(){
             if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
             else flag = true;
         }
-        k++;    
+        k++;
+    
     }
     
     if (bestg > 0 ) {
