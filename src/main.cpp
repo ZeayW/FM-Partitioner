@@ -240,7 +240,12 @@ void initGain(){
     }
     
     aGain = 0;
-    store();
+    bestg = aGain;
+    bestacnnt = aCellCnt;
+    bestbcnnt = bCellCnt;
+    bestaCellsize = aCellsize;
+    bestbCellsize = bCellsize;
+    bestk = k;
 
     // for each cell, init its gain
     for (int i = 0; i < ccnt; i++){
@@ -385,7 +390,12 @@ void updateGain(Cell * c){
         aCellCnt++;
     }
     if (aGain > bestg)
-        store();
+        bestg = aGain;
+        bestacnnt = aCellCnt;
+        bestbcnnt = bCellCnt;
+        bestaCellsize = aCellsize;
+        bestbCellsize = bCellsize;
+        bestk = k;
     return;
 }
 
