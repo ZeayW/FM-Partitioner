@@ -468,15 +468,28 @@ void FMAlgorithm(){
     cellstack.clear();
     while (!flag && count++ < ccnt){
         // 
+        Cell * a = findMaxGain(0), * b = findMaxGain(1);
+        if (a->gain >= b->gain) {
+            if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
+            else if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
+            else flag = true;
+        }
+        else {
+            if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
+            else if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
+            else flag = true;
+        }
+        k++;
+        continue
         if (!bfccnt){
-            cout<<"a "<<count<<" "<<afccnt<<endl;
+            //cout<<"a "<<count<<" "<<afccnt<<endl;
             Cell * a = findMaxGain(0);
             // check if balance
             if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
             else flag = true;
         }
         else if (!afccnt){
-            cout<<"b "<<count<<" "<<afccnt<<endl;
+            //cout<<"b "<<count<<" "<<afccnt<<endl;
             Cell * b = findMaxGain(1);
             if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
             else flag = true;
