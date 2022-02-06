@@ -10,11 +10,9 @@
 #include <list>
 #include <vector>
 
-
 using namespace std;
 
 class Net {
-
 public:
     Net(string str) : A(0), B(0), name(str){
     } 
@@ -27,16 +25,13 @@ public:
 class Node
 {
     friend class Cell;
- 
 public:
     Node(const int &info) : id(info), next(NULL), prev(NULL){}
-
     int id;
     Node *next, *prev; 
 }; 
 
 class Cell {
-    
     public:
         Cell(string & str, int & sz, bool st, int & id) : 
             name(str), size(sz), gain(0), pins(0), 
@@ -111,10 +106,10 @@ void calAB(){
 
 void parseNets(istream & in){
     string str, tmp;
-    while (in >> tmp){ // NET
-        in >> str;  // nxxx
+    while (in >> tmp){ 
+        in >> str; 
         net2id[str] = ncnt;
-        in >> tmp;  // {
+        in >> tmp; 
         Net *n = new Net(str);
         nets.push_back(n);
         while (in >> tmp && tmp[0] != '}'){
@@ -175,19 +170,10 @@ void insert_front(Cell * c){
     Node *p = c->nd;
     Node *pre = bucketlist[set][gain];
     Node* cur = bucketlist[set][gain]->next;
-    //while(cur!=NULL && cells[cur->id]->size<c->size){
-    //    cout<<p->id<<" "<<c->size<<" "<< cells[cur->id]->size<<endl;
-    //    pre = pre->next;
-    //    cur = cur->next;
-    //}
-    //cout<<endl;
     p->prev = pre;
     p->next = cur;
     pre->next = p;
     
-    //p->prev = bucketlist[set][gain];
-    //p->next = bucketlist[set][gain]->next;
-    //bucketlist[set][gain]->next = p;
     if (p->next != NULL) p->next->prev = p;
 }
 
