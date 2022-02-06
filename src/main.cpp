@@ -41,14 +41,14 @@ class Cell {
         Cell(string & str, int & sz, bool st, int & id) : 
             name(str), size(sz), gain(0), pins(0), 
             set(st), lock(0), to(NULL){
-            to = new Node(id);
+            nd = new Node(id);
         }
         ~Cell (){}
         string name;
         int size, gain, pins;
         bool set, lock;
         std::vector <int> netList;
-        Node *to;
+        Node *nd;
 };
 
 vector <int> cellstack;
@@ -163,7 +163,7 @@ void parse(int argc, char ** argv){
 }
 
 void remove(Cell * c){
-    Node *p = c->to;
+    Node *p = c->nd;
     p->prev->next = p->next;
     if (p->next != NULL) p->next->prev = p->prev;
 }
@@ -172,7 +172,7 @@ void remove(Cell * c){
 void insert_front(Cell * c){
     int gain = c->gain;
     bool set = c->set;
-    Node *p = c->to;
+    Node *p = c->nd;
     Node *pre = bucketlist[set][gain];
     Node* cur = bucketlist[set][gain]->next;
     //while(cur!=NULL && cells[cur->id]->size<c->size){
@@ -267,7 +267,7 @@ void updateGain(Cell * c){
     aGain += c->gain;
 
     c->lock = true;
-    int num = c->to->id;
+    int num = c->nd->id;
     cellstack.push_back(num);
     // if c belong to set A
     if (!c->set) {
@@ -424,8 +424,8 @@ void FMAlgorithm(){
             if (a->gain >= b->gain) {
                 int n = 0;
                 
-                while( !isValid(true,a->size) && a->to->next!=NULL && n++<=thred_n){
-                    a = cells[a->to->next->id];
+                while( !isValid(true,a->size) && a->nd->next!=NULL && n++<=thred_n){
+                    a = cells[a->nd->next->id];
                 }
                 if (isValid(true,a->size)) updateGain(a);
                 else if (isValid(false,b->size)) updateGain(b);
@@ -433,8 +433,8 @@ void FMAlgorithm(){
             }
             else {
                 int n = 0;
-                while( !isValid(false,b->size) && b->to->next!=NULL && n++<=thred_n){
-                    b = cells[b->to->next->id];
+                while( !isValid(false,b->size) && b->nd->next!=NULL && n++<=thred_n){
+                    b = cells[b->nd->next->id];
                 }
                 if (isValid(false,b->size)) updateGain(b);
                 else if (isValid(true,a->size)) updateGain(a);
@@ -443,8 +443,8 @@ void FMAlgorithm(){
         }
         else if (a==NULL){
             int n = 0;
-            while( !isValid(false,b->size) && b->to->next!=NULL ){
-                b = cells[b->to->next->id];
+            while( !isValid(false,b->size) && b->nd->next!=NULL ){
+                b = cells[b->nd->next->id];
             }
             if (isValid(false,b->size)) updateGain(b);
             else flag = true;
@@ -452,8 +452,8 @@ void FMAlgorithm(){
         else {
             // check if balance
             int n = 0;
-            while( !isValid(true,a->size) && a->to->next!=NULL){
-                a = cells[a->to->next->id];
+            while( !isValid(true,a->size) && a->nd->next!=NULL){
+                a = cells[a->nd->next->id];
             }
             if (isValid(true,a->size)) updateGain(a);
             else flag = true;
