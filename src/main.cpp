@@ -26,7 +26,7 @@ map <string, int> cell2id, net2id;
 int ccnt = 0, ncnt = 0;
 
 double error; 
-int totalCellsize = 0, aCellsize = 0, bCellsize = 0, cs = 0;
+int totalCellsize = 0, aCellsize = 0, bCellsize = 0, cutsz = 0;
 int bestacnnt = 0, bestbcnnt = 0, bestaCellsize = 0, bestbCellsize = 0;
 int aCellCnt = 0, bCellCnt = 0, aGain = 0, bestg = 0;
 int Pmax = 0;
@@ -95,26 +95,8 @@ void parseNets(istream & in){
     }
 }
 
-void countCutSize(){
-    cs = 0;
-    for (int i = 0; i < ncnt; i++)
-        if (nets[i]->A && nets[i]->B) cs++;
-}
-
-
-//calculate Pmax to intialize the bucket list
-void countPmax(){
-    for (int i = 0; i < ccnt; i++)
-        if (cells[i]->pins > Pmax) Pmax = cells[i]->pins;
-}
-
-// error = n/10
-void countError(){
-    error = (double) totalCellsize/10;
-}
-
 void outputFile(ostream & out){
-    out << "cut_size " << cs << endl;
+    out << "cut_size " << cutsz << endl;
     out << "A " << aCellCnt << endl;
     for (int i = 0; i < ccnt; i++)
         if (!cells[i]->set)
@@ -504,8 +486,10 @@ int main(int argc, char *argv[]){
     else parseNets(cin);
     ifsNet.close();
     //bestset = new bool[ccnt]();
-    countCutSize();
-    cout << "Initial Cut Size = " << cs << endl;
+    cutsz = 0;
+    for (int i = 0; i < ncnt; i++)
+        if (nets[i]->A && nets[i]->B) cutsz++;
+    cout << "Initial Cut Size = " << cutsz << endl;
     cout << endl;
 
     error = (double) totalCellsize/10;
@@ -518,8 +502,10 @@ int main(int argc, char *argv[]){
     FMAlgorithm();
 	tend = clock();
     restore();
-    countCutSize();
-    cout << "Final Cut Size = " << cs << endl;
+    cutsz = 0;
+    for (int i = 0; i < ncnt; i++)
+        if (nets[i]->A && nets[i]->B) cutsz++;
+    cout << "Final Cut Size = " << cutsz << endl;
     if (of.is_open()) outputFile(of);
     else outputFile(cout);
     of.close();
