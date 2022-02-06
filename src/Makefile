@@ -6,10 +6,10 @@ CC=g++
 # if you want to use debugger, add -g to CFLAGS and LDFLAGS
 CFLAGS=
 LDFLAGS=-std=c++11 -O3 -lm
-SOURCES=main.cpp
+SOURCES=./src/main.cpp
 OBJECTS=$(SOURCES:.c=.o)
-EXECUTABLE=../bin/hw1
-INCLUDES=cell.h net.h
+EXECUTABLE=./bin/hw1
+INCLUDES=./src/cell.h ./src/net.h
 
 all: $(SOURCES) $(EXECUTABLE)
 
