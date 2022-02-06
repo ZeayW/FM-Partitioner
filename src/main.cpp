@@ -134,11 +134,13 @@ void test(){
     return;
 }
 
+//calculate Pmax to intialize the bucket list
 void countPmax(){
     for (int i = 0; i < ccnt; i++)
         if (vc[i]->pins > Pmax) Pmax = vc[i]->pins;
 }
 
+// error = n/10
 void countError(){
     error = (double) tcsz/10;
 }
@@ -212,7 +214,7 @@ void remove(Cell * c){
     if (p->next != NULL) p->next->prev = p->prev;
 }
 
-
+// insert cell c with gain g to the front of bucket_list[g]
 void insert_front(Cell * c){
     int gain = c->gain;
     bool set = c->set;
@@ -228,21 +230,26 @@ void move(Cell * c){
     insert_front(c);
 }
 
+// build the bucket list
 void buildBlist(){
     blist[0].clear();
     blist[1].clear();
+    // init the bucket list( head node for all p)
     for (int i = -Pmax; i <= Pmax; i++) {
         if (blist[0][i] == NULL) blist[0][i] = new Node(-1);
         if (blist[1][i] == NULL) blist[1][i] = new Node(-1);
     }
+    // insert all the cells to the bucket list
     for (int i = 0; i < ccnt; i++)
         insert_front(vc[i]);
 }
 
-
+// find the cell with maximum gain
 Cell * findMaxGain(bool set){
     int p = Pmax;
+    // find the max gain (find the first list that is not empty)
     while (p >= -Pmax && blist[set][p]->next == NULL){p--;}
+    // find the first cell with maximum gain
     Cell * ans = vc[blist[set][p]->next->id];
     return ans;
 }
@@ -301,38 +308,41 @@ void initGain(){
     store();
     afccnt = accnt;
     bfccnt = bccnt;
-   
-    
-    
+    // for each cell, init its gain
     for (int i = 0; i < ccnt; i++){
+        // for each net n on cell i, check if n is critical
         for (int j = 0 ; j < vc[i]->netList.size(); j++){
-            int id = vc[i]->netList[j];
+            int n = vc[i]->netList[j];
+            // if cell i belongs to set A 
             if (vc[i]->set == 0) {
-                if (vn[id]->A == 1) vc[i]->gain++;
-                if (vn[id]->B == 0) vc[i]->gain--;
+                if (vn[n]->A == 1) vc[i]->gain++;
+                if (vn[n]->B == 0) vc[i]->gain--;
             }
             else {
-                if (vn[id]->B == 1) vc[i]->gain++;
-                if (vn[id]->A == 0) vc[i]->gain--;
+                if (vn[n]->B == 1) vc[i]->gain++;
+                if (vn[n]->A == 0) vc[i]->gain--;
             }
         }
     }
     buildBlist();
 }
 
+//update all the gain of all the cells that are related to the base cell c
 void updateGain(Cell * c){
     accg += c->gain;
 
-    
     c->lock = true;
     int num = c->to->id;
     cellstack.push_back(num);
+    // if c belong to set A
     if (!c->set) {
         int szn = c->netList.size();
         for(int i = 0; i < szn; i++){
             int id = c->netList[i];
             Net * net = vn[id];
             int szc = net->cellList.size();
+            //check critical nets before the move
+            // if T(n)=0 then increment gains of all free cells on n
             if (net->B == 0){
                 for (int j = 0; j < szc; j++){
                     int idc = net->cellList[j];
@@ -342,6 +352,8 @@ void updateGain(Cell * c){
                     }
                 }
             }
+            // else if T(n) = 1 then decrement gain of the only T cell on n,
+            // if it is free
             else if (net->B == 1){
                 for (int j = 0; j < szc; j++){
                     int idc = net->cellList[j];
@@ -351,9 +363,12 @@ void updateGain(Cell * c){
                     }
                 }
             }
+            // change F(n), T(n)
             net->A--;
             net->B++;
             c->set = true;
+            // check for critical nets after the move
+            // if F(n) = 0 then decrement gains of all free cells on n
             if (net->A == 0){
                 for (int j = 0; j < szc; j++){
                     int idc = net->cellList[j];
@@ -363,6 +378,8 @@ void updateGain(Cell * c){
                     }
                 }
             }
+            // else if F(n) = 1 then increment gain of the only F cell on n,
+            // if it is free
             else if (net->A == 1){
                 for (int j = 0; j < szc; j++){
                     int idc = net->cellList[j];
@@ -373,6 +390,8 @@ void updateGain(Cell * c){
                 }
             }
         }
+
+        // remove the base cell
         remove(c);
         acsz -= c->size;
         bcsz += c->size;
@@ -450,6 +469,7 @@ void FMAlgorithm(){
     while (!flag && count++ < ccnt){
         if (!bfccnt){
             Cell * a = findMaxGain(0);
+            // check if balance
             if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
             else flag = true;
         }
@@ -488,13 +508,15 @@ void FMAlgorithm(){
     else { bestk = -1; k = -1; return;}
 }
 
+// adjust the sets to be balanced
 void adjust(){
-    if (abs(acsz-acsz) < error) return;
+    if (abs(acsz-bcsz) < error) return;
     else {
         cout << "...Need balancing.\n";
         int i;
         for (i = 0; i < ccnt && abs(acsz-bcsz) >= error; i++){
             Cell * c = vc[i];
+            // if |A|>|B| and c belong to A , then move c to B
             if (acsz > bcsz && !c->set){
                 acsz -= c->size;
                 bcsz += c->size;
