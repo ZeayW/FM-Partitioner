@@ -30,9 +30,8 @@ ifstream ifc, ifn;
 ofstream of;
 double error; 
 int totalCellsize = 0, aCellsize = 0, bCellsize = 0, cs = 0;
-int aCellCnt = 0, bCellCnt = 0, aGain = 0, bestg = 0;
-
 int bestacnnt = 0, bestbcnnt = 0, bestaCellsize = 0, bestbCellsize = 0;
+int aCellCnt = 0, bCellCnt = 0, aGain = 0, bestg = 0;
 int Pmax = 0;
 double tstart, tend;
 map <int, Node*> blist[2];
