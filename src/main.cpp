@@ -25,16 +25,18 @@ vector <int> bestA, bestB;
 map <string, int> cell2id, net2id; 
 int ccnt = 0, ncnt = 0;
 
-int cutSize = 0;
-ifstream ifsCell, ifsNet;
-ofstream of;
 double error; 
 int totalCellsize = 0, aCellsize = 0, bCellsize = 0, cs = 0;
 int bestacnnt = 0, bestbcnnt = 0, bestaCellsize = 0, bestbCellsize = 0;
 int aCellCnt = 0, bCellCnt = 0, aGain = 0, bestg = 0;
 int Pmax = 0;
+
+int cutSize = 0;
+ifstream ifsCell, ifsNet;
+ofstream of;
+
 double tstart, tend;
-map <int, Node*> blist[2];
+map <int, Node*> bucketlist[2];
 
 void parseCells(istream & in){
     string str;
@@ -195,7 +197,7 @@ void traverse(){
         cout << "---- " << ((!k) ? "A" : "B") << " ----\n";
         for (int i = Pmax ; i >= -Pmax; i--){
             cout << '[' << i << ']' << ' ';
-            Node *trav = blist[k][i]->next;
+            Node *trav = bucketlist[k][i]->next;
             while (trav != NULL){
                 cout << cells[trav->id]->name << "->";
                 trav = trav->next;
@@ -218,8 +220,8 @@ void insert_front(Cell * c){
     int gain = c->gain;
     bool set = c->set;
     Node *p = c->to;
-    Node *pre = blist[set][gain];
-    Node* cur = blist[set][gain]->next;
+    Node *pre = bucketlist[set][gain];
+    Node* cur = bucketlist[set][gain]->next;
     //while(cur!=NULL && cells[cur->id]->size<c->size){
     //    cout<<p->id<<" "<<c->size<<" "<< cells[cur->id]->size<<endl;
     //    pre = pre->next;
@@ -230,9 +232,9 @@ void insert_front(Cell * c){
     p->next = cur;
     pre->next = p;
     
-    //p->prev = blist[set][gain];
-    //p->next = blist[set][gain]->next;
-    //blist[set][gain]->next = p;
+    //p->prev = bucketlist[set][gain];
+    //p->next = bucketlist[set][gain]->next;
+    //bucketlist[set][gain]->next = p;
     if (p->next != NULL) p->next->prev = p;
 }
 
@@ -242,13 +244,13 @@ void move(Cell * c){
 }
 
 // build the bucket list
-void buildBlist(){
-    blist[0].clear();
-    blist[1].clear();
+void buildbucketlist(){
+    bucketlist[0].clear();
+    bucketlist[1].clear();
     // init the bucket list( head node for all p)
     for (int i = -Pmax; i <= Pmax; i++) {
-        if (blist[0][i] == NULL) blist[0][i] = new Node(-1);
-        if (blist[1][i] == NULL) blist[1][i] = new Node(-1);
+        if (bucketlist[0][i] == NULL) bucketlist[0][i] = new Node(-1);
+        if (bucketlist[1][i] == NULL) bucketlist[1][i] = new Node(-1);
     }
     // insert all the cells to the bucket list
     for (int i = 0; i < ccnt; i++)
@@ -259,12 +261,12 @@ void buildBlist(){
 Cell * findMaxGain(bool set){
     int p = Pmax;
     // find the max gain (find the first list that is not empty)
-    while (p >= -Pmax && blist[set][p]->next == NULL){p--;}
+    while (p >= -Pmax && bucketlist[set][p]->next == NULL){p--;}
     // find the first cell with maximum gain
     if (p<-Pmax){
         return NULL;
     }
-    Cell * ans = cells[blist[set][p]->next->id];
+    Cell * ans = cells[bucketlist[set][p]->next->id];
     return ans;
 }
 
@@ -337,7 +339,7 @@ void initGain(){
             }
         }
     }
-    buildBlist();
+    buildbucketlist();
 }
 
 //update all the gain of all the cells that are related to the base cell c
