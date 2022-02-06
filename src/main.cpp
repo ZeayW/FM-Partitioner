@@ -262,6 +262,9 @@ Cell * findMaxGain(bool set){
     // find the max gain (find the first list that is not empty)
     while (p >= -Pmax && blist[set][p]->next == NULL){p--;}
     // find the first cell with maximum gain
+    if (p==-Pmax){
+        return NULL;
+    }
     Cell * ans = vc[blist[set][p]->next->id];
     return ans;
 }
@@ -480,8 +483,10 @@ void FMAlgorithm(){
     cellstack.clear();
     while (!flag && count++ < ccnt){
         // 
-        if (afccnt && bfccnt){
-            Cell * a = findMaxGain(0), * b = findMaxGain(1);
+        Cell * a = findMaxGain(0), * b = findMaxGain(1);
+
+        if (a!=NULL && b!=NULL){
+            //Cell * a = findMaxGain(0), * b = findMaxGain(1);
             if (a->gain >= b->gain) {
                 int n = 0;
                 while(abs(acsz-bcsz-2*a->size) >= error && a->to->next!=NULL && n++<=3){
@@ -493,7 +498,7 @@ void FMAlgorithm(){
             }
             else {
                 int n = 0;
-                while(abs(bcsz-acsz-2*b->size) >= error && b->to->next!=NULL && n++<=4){
+                while(abs(bcsz-acsz-2*b->size) >= error && b->to->next!=NULL && n++<=3){
                     b = vc[b->to->next->id];
                 }
                 if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
@@ -501,13 +506,13 @@ void FMAlgorithm(){
                 else flag = true;
             }
         }
-        else if (!afccnt){
-            Cell * b = findMaxGain(1);
+        else if (a==NULL){
+            //Cell * b = findMaxGain(1);
             if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
             else flag = true;
         }
         else {
-            Cell * a = findMaxGain(0);
+            //Cell * a = findMaxGain(0);
             // check if balance
             if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
             else flag = true;
