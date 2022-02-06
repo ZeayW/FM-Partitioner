@@ -428,7 +428,6 @@ void FMAlgorithm(){
     
     if (bestg > 0 ) {
         iter++;
-        
         k = bestk;
         aCellCnt = bestacnnt;
         bCellCnt = bestbcnnt;
