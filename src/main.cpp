@@ -14,11 +14,10 @@
 
 using namespace std;
 
-typedef vector <int> vi;
-
-vector <Net*> vn, *bestvn;
-vector <Cell*> vc, *bestvc;
 vector <int> cellstack;
+vector <Net*> nets, *bestnets;
+vector <Cell*> cells, *bestcells;
+
 int k = 0, bestk;
 bool *bestset;
 vector <int> bestA, bestB;
@@ -43,13 +42,13 @@ void parseCells(istream & in){
         mc[str] = ccnt;
         if (aCellsize <= bCellsize){
             Cell *c = new Cell(str, size, 0, ccnt);
-            vc.push_back(c);
+            cells.push_back(c);
             aCellsize += size;
             aCellCnt++;
         }
         else {
             Cell *c = new Cell(str, size, 1, ccnt);
-            vc.push_back(c);
+            cells.push_back(c);
             bCellsize += size;
             bCellCnt++;
         }
@@ -60,13 +59,13 @@ void parseCells(istream & in){
 
 void calAB(){
     for (int i = 0; i < ncnt; i++){
-        vi & vl = vn[i]->cellList;
-        vn[i]->B = 0;
-        vn[i]->A = 0;
+        vector <int> & vl = nets[i]->cellList;
+        nets[i]->B = 0;
+        nets[i]->A = 0;
         for (int j = 0; j < vl.size(); j++){
-            Cell * cell = vc[vl[j]];
-            if (cell->set) vn[i]->B++;
-            else vn[i]->A++;
+            Cell * cell = cells[vl[j]];
+            if (cell->set) nets[i]->B++;
+            else nets[i]->A++;
         }
     }
 }
@@ -78,15 +77,15 @@ void parseNets(istream & in){
         mn[str] = ncnt;
         in >> tmp;  // {
         Net *n = new Net(str);
-        vn.push_back(n);
+        nets.push_back(n);
         while (in >> tmp && tmp[0] != '}'){
-            vi & l = vc[mc[tmp]]->netList;
+            vector <int> & l = cells[mc[tmp]]->netList;
             if (!l.size() || l[l.size()-1] != ncnt) {
                 l.push_back(ncnt);
-                vc[mc[tmp]]->pins++;
-                vn[ncnt]->cellList.push_back(mc[tmp]);
-                if (vc[mc[tmp]]->set) vn[ncnt]->B++;
-                else vn[ncnt]->A++;
+                cells[mc[tmp]]->pins++;
+                nets[ncnt]->cellList.push_back(mc[tmp]);
+                if (cells[mc[tmp]]->set) nets[ncnt]->B++;
+                else nets[ncnt]->A++;
             }
         }
         ncnt++;
@@ -96,21 +95,21 @@ void parseNets(istream & in){
 void countCutSize(){
     cs = 0;
     for (int i = 0; i < ncnt; i++)
-        if (vn[i]->A && vn[i]->B) cs++;
+        if (nets[i]->A && nets[i]->B) cs++;
 }
 
 
 void test(){
     for (int i = 0; i < ccnt; i++){
-        cout << vc[i]->name << " s"
-	     << vc[i]->size << " g"
-             << vc[i]->gain << " ab"
-	     << vc[i]->set  << " p"
-	     << vc[i]->pins << " l"
-	     << vc[i]->lock << ' ';
-	for (int j = 0; j < vc[i]->netList.size(); j++){
-	    int id = vc[i]->netList[j];
-	    cout << vn[id]->name << ' ';
+        cout << cells[i]->name << " s"
+	     << cells[i]->size << " g"
+             << cells[i]->gain << " ab"
+	     << cells[i]->set  << " p"
+	     << cells[i]->pins << " l"
+	     << cells[i]->lock << ' ';
+	for (int j = 0; j < cells[i]->netList.size(); j++){
+	    int id = cells[i]->netList[j];
+	    cout << nets[id]->name << ' ';
         }
 	cout << endl;
     }
@@ -122,10 +121,10 @@ void test(){
     cout << "|A - B| = " << abs(aCellsize-bCellsize) << endl;
     cout << "...\n";
     for (int i = 0; i < ncnt; i++){
-        cout << vn[i]->name << ' ';
-        for (int j = 0; j < vn[i]->cellList.size(); j++){
-            int id = vn[i]->cellList[j];
-            cout << vc[id]->name << ' ';
+        cout << nets[i]->name << ' ';
+        for (int j = 0; j < nets[i]->cellList.size(); j++){
+            int id = nets[i]->cellList[j];
+            cout << cells[id]->name << ' ';
         }
         cout << endl;
     }
@@ -136,7 +135,7 @@ void test(){
 //calculate Pmax to intialize the bucket list
 void countPmax(){
     for (int i = 0; i < ccnt; i++)
-        if (vc[i]->pins > Pmax) Pmax = vc[i]->pins;
+        if (cells[i]->pins > Pmax) Pmax = cells[i]->pins;
 }
 
 // error = n/10
@@ -148,12 +147,12 @@ void outputFile(ostream & out){
     out << "cut_size " << cs << endl;
     out << "A " << aCellCnt << endl;
     for (int i = 0; i < ccnt; i++)
-        if (!vc[i]->set)
-            out << vc[i]->name << endl;
+        if (!cells[i]->set)
+            out << cells[i]->name << endl;
     out << "B " << bCellCnt << endl;
     for (int i = 0; i < ccnt; i++)
-        if (vc[i]->set)
-            out << vc[i]->name << endl;
+        if (cells[i]->set)
+            out << cells[i]->name << endl;
 }
 
 
@@ -197,7 +196,7 @@ void traverse(){
             cout << '[' << i << ']' << ' ';
             Node *trav = blist[k][i]->next;
             while (trav != NULL){
-                cout << vc[trav->id]->name << "->";
+                cout << cells[trav->id]->name << "->";
                 trav = trav->next;
             }
             cout << endl;
@@ -220,8 +219,8 @@ void insert_front(Cell * c){
     Node *p = c->to;
     Node *pre = blist[set][gain];
     Node* cur = blist[set][gain]->next;
-    //while(cur!=NULL && vc[cur->id]->size<c->size){
-    //    cout<<p->id<<" "<<c->size<<" "<< vc[cur->id]->size<<endl;
+    //while(cur!=NULL && cells[cur->id]->size<c->size){
+    //    cout<<p->id<<" "<<c->size<<" "<< cells[cur->id]->size<<endl;
     //    pre = pre->next;
     //    cur = cur->next;
     //}
@@ -252,7 +251,7 @@ void buildBlist(){
     }
     // insert all the cells to the bucket list
     for (int i = 0; i < ccnt; i++)
-        insert_front(vc[i]);
+        insert_front(cells[i]);
 }
 
 // find the cell with maximum gain
@@ -264,7 +263,7 @@ Cell * findMaxGain(bool set){
     if (p<-Pmax){
         return NULL;
     }
-    Cell * ans = vc[blist[set][p]->next->id];
+    Cell * ans = cells[blist[set][p]->next->id];
     return ans;
 }
 
@@ -273,14 +272,14 @@ void reverse(){
     int i = cellstack.size()-1;
     for (; i > k; i--)
         //cout << cellstack[i] << " ";
-        vc[cellstack[i]]->set = !vc[cellstack[i]]->set;
+        cells[cellstack[i]]->set = !cells[cellstack[i]]->set;
     
 }
 
 void store(){
     bestg = aGain;
-    //bestvc = &vc;
-    //bestvn = &vn;
+    //bestcells = &cells;
+    //bestnets = &nets;
     bestacnnt = aCellCnt;
     bestbcnnt = bCellCnt;
     bestaCellsize = aCellsize;
@@ -290,14 +289,14 @@ void store(){
     //bestB.clear();
     bestk = k;
     //for (int i = 0 ; i < ccnt; i++)
-    //    bestset[i] = vc[i]->set;
+    //    bestset[i] = cells[i]->set;
 }
 
 
 
 void restore(){
-    //vc = *bestvc;
-    //vn = *bestvn;
+    //cells = *bestcells;
+    //nets = *bestnets;
     k = bestk;
     //cout << k;
     aCellCnt = bestacnnt;
@@ -305,7 +304,7 @@ void restore(){
     aCellsize = bestaCellsize;
     bCellsize = bestbCellsize;
     //for (int i = 0 ; i < ccnt; i++)
-    //    vc[i]->set = bestset[i];
+    //    cells[i]->set = bestset[i];
     reverse();
     calAB();
     //cout << "???\n";
@@ -314,8 +313,8 @@ void restore(){
 
 void initGain(){
     for (int i = 0; i < ccnt; i++){
-        vc[i]->gain = 0;
-        vc[i]->lock = 0;
+        cells[i]->gain = 0;
+        cells[i]->lock = 0;
     }
     
     aGain = 0;
@@ -324,16 +323,16 @@ void initGain(){
     // for each cell, init its gain
     for (int i = 0; i < ccnt; i++){
         // for each net n on cell i, check if n is critical
-        for (int j = 0 ; j < vc[i]->netList.size(); j++){
-            int n = vc[i]->netList[j];
+        for (int j = 0 ; j < cells[i]->netList.size(); j++){
+            int n = cells[i]->netList[j];
             // if cell i belongs to set A 
-            if (vc[i]->set == 0) {
-                if (vn[n]->A == 1) vc[i]->gain++;
-                if (vn[n]->B == 0) vc[i]->gain--;
+            if (cells[i]->set == 0) {
+                if (nets[n]->A == 1) cells[i]->gain++;
+                if (nets[n]->B == 0) cells[i]->gain--;
             }
             else {
-                if (vn[n]->B == 1) vc[i]->gain++;
-                if (vn[n]->A == 0) vc[i]->gain--;
+                if (nets[n]->B == 1) cells[i]->gain++;
+                if (nets[n]->A == 0) cells[i]->gain--;
             }
         }
     }
@@ -352,16 +351,16 @@ void updateGain(Cell * c){
         int szn = c->netList.size();
         for(int i = 0; i < szn; i++){
             int id = c->netList[i];
-            Net * net = vn[id];
+            Net * net = nets[id];
             int szc = net->cellList.size();
             //check critical nets before the move
             // if T(n)=0 then increment gains of all free cells on n
             if (net->B == 0){
                 for (int j = 0; j < szc; j++){
                     int idc = net->cellList[j];
-                    if (!vc[idc]->lock) {
-                        vc[idc]->gain++;
-                        move(vc[idc]);
+                    if (!cells[idc]->lock) {
+                        cells[idc]->gain++;
+                        move(cells[idc]);
                     }
                 }
             }
@@ -370,9 +369,9 @@ void updateGain(Cell * c){
             else if (net->B == 1){
                 for (int j = 0; j < szc; j++){
                     int idc = net->cellList[j];
-                    if (!vc[idc]->lock && vc[idc]->set) {
-                        vc[idc]->gain--;
-                        move(vc[idc]);
+                    if (!cells[idc]->lock && cells[idc]->set) {
+                        cells[idc]->gain--;
+                        move(cells[idc]);
                     }
                 }
             }
@@ -385,9 +384,9 @@ void updateGain(Cell * c){
             if (net->A == 0){
                 for (int j = 0; j < szc; j++){
                     int idc = net->cellList[j];
-                    if (!vc[idc]->lock) {
-                        vc[idc]->gain--;
-                        move(vc[idc]);
+                    if (!cells[idc]->lock) {
+                        cells[idc]->gain--;
+                        move(cells[idc]);
                     }
                 }
             }
@@ -396,9 +395,9 @@ void updateGain(Cell * c){
             else if (net->A == 1){
                 for (int j = 0; j < szc; j++){
                     int idc = net->cellList[j];
-                    if (!vc[idc]->lock && !vc[idc]->set) {
-                        vc[idc]->gain++;
-                        move(vc[idc]);
+                    if (!cells[idc]->lock && !cells[idc]->set) {
+                        cells[idc]->gain++;
+                        move(cells[idc]);
                     }
                 }
             }
@@ -415,23 +414,23 @@ void updateGain(Cell * c){
         int szn = c->netList.size();
         for(int i = 0; i < szn; i++){
             int id = c->netList[i];
-            Net * net = vn[id];
+            Net * net = nets[id];
             int szc = net->cellList.size();
             if (net->A == 0){
                 for (int j = 0; j < szc; j++){
                     int idc = net->cellList[j];
-                    if (!vc[idc]->lock) {
-                        vc[idc]->gain++;
-                        move(vc[idc]);
+                    if (!cells[idc]->lock) {
+                        cells[idc]->gain++;
+                        move(cells[idc]);
                     }
                 }
             }
             else if (net->A == 1){
                 for (int j = 0; j < szc; j++){
                     int idc = net->cellList[j];
-                    if (!vc[idc]->lock && !vc[idc]->set) {
-                        vc[idc]->gain--;
-                        move(vc[idc]);
+                    if (!cells[idc]->lock && !cells[idc]->set) {
+                        cells[idc]->gain--;
+                        move(cells[idc]);
                     }
                 }
             }
@@ -441,18 +440,18 @@ void updateGain(Cell * c){
             if (net->B == 0){
                 for (int j = 0; j < szc; j++){
                     int idc = net->cellList[j];
-                    if (!vc[idc]->lock) {
-                        vc[idc]->gain--;
-                        move(vc[idc]);
+                    if (!cells[idc]->lock) {
+                        cells[idc]->gain--;
+                        move(cells[idc]);
                     }
                 }
             }
             else if (net->B == 1){
                 for (int j = 0; j < szc; j++){
                     int idc = net->cellList[j];
-                    if (!vc[idc]->lock && vc[idc]->set) {
-                        vc[idc]->gain++;
-                        move(vc[idc]);
+                    if (!cells[idc]->lock && cells[idc]->set) {
+                        cells[idc]->gain++;
+                        move(cells[idc]);
                     }
                 }
             }
@@ -487,7 +486,7 @@ void FMAlgorithm(){
                 int n = 0;
                 
                 while(abs(aCellsize-bCellsize-2*a->size) >= error && a->to->next!=NULL && n++<=thred_n){
-                    a = vc[a->to->next->id];
+                    a = cells[a->to->next->id];
                 }
                 if (abs(aCellsize-bCellsize-2*a->size) < error) updateGain(a);
                 else if (abs(bCellsize-aCellsize-2*b->size) < error) updateGain(b);
@@ -496,7 +495,7 @@ void FMAlgorithm(){
             else {
                 int n = 0;
                 while(abs(bCellsize-aCellsize-2*b->size) >= error && b->to->next!=NULL && n++<=thred_n){
-                    b = vc[b->to->next->id];
+                    b = cells[b->to->next->id];
                 }
                 if (abs(bCellsize-aCellsize-2*b->size) < error) updateGain(b);
                 else if (abs(aCellsize-bCellsize-2*a->size) < error) updateGain(a);
@@ -506,7 +505,7 @@ void FMAlgorithm(){
         else if (a==NULL){
             int n = 0;
             while(abs(bCellsize-aCellsize-2*b->size) >= error && b->to->next!=NULL ){
-                b = vc[b->to->next->id];
+                b = cells[b->to->next->id];
             }
             if (abs(bCellsize-aCellsize-2*b->size) < error) updateGain(b);
             else flag = true;
@@ -515,7 +514,7 @@ void FMAlgorithm(){
             // check if balance
             int n = 0;
             while(abs(aCellsize-bCellsize-2*a->size) >= error && a->to->next!=NULL){
-                a = vc[a->to->next->id];
+                a = cells[a->to->next->id];
             }
             if (abs(aCellsize-bCellsize-2*a->size) < error) updateGain(a);
             else flag = true;
@@ -548,7 +547,7 @@ void adjust(){
         cout << "...Need balancing.\n";
         int i;
         for (i = 0; i < ccnt && abs(aCellsize-bCellsize) >= error; i++){
-            Cell * c = vc[i];
+            Cell * c = cells[i];
             // if |A|>|B| and c belong to A , then move c to B
             if (aCellsize > bCellsize && !c->set){
                 aCellsize -= c->size;
