@@ -481,13 +481,8 @@ void FMAlgorithm(){
     while (!flag && count++ < ccnt){
         // 
         Cell * a = findMaxGain(0), * b = findMaxGain(1);
-        int thred_n;
-        if (pass>5){
-            thred_n = 5;
-        }
-        else{
-            thred_n = 1000;
-        }
+        int thred_n = (pass==1)?10000 : 3;
+        
         if (a!=NULL && b!=NULL){
             if (a->gain >= b->gain) {
                 int n = 0;
