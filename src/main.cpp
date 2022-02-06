@@ -390,7 +390,7 @@ void updateGain(Cell * c){
     return;
 }
 
-int pass = 0;
+int iter = 0;
 
 bool isValid(bool set,int sz){
     if (set){
@@ -411,7 +411,7 @@ void FMAlgorithm(){
     while (!flag && count++ < ccnt){
         // 
         Cell * a = findMaxGain(0), * b = findMaxGain(1);
-        int thred_n = (pass<=5)?3 : 10;
+        int thred_n = (iter<=5)?3 : 10;
         
         if (a!=NULL && b!=NULL){
             if (a->gain >= b->gain) {
@@ -456,14 +456,14 @@ void FMAlgorithm(){
     }
     
     if (bestg > 0 ) {
-        pass++;
+        iter++;
         
         restore();
-        cout << "Pass " << pass << endl;
+        cout << "Iter " << iter << endl;
         cout << "Best Partial Sum of Gains: " << bestg << endl;
         cout << "Total Sum of Gains (Should be 0): " << aGain << endl;
         cout << endl;
-        if (pass>=40){
+        if (iter>=40){
             return;
         }
         FMAlgorithm();
