@@ -222,10 +222,11 @@ void insert_front(Cell * c){
     Node *pre = blist[set][gain];
     Node* cur = blist[set][gain]->next;
     while(cur!=NULL && vc[cur->id]->size<=c->size){
+        cout<<p->id<<" "<<c->size<<" "<< vc[cur->id]->size<<endl;
         pre = pre->next;
         cur = cur->next;
     }
-    cout<<p->id<<endl;
+    cout<<endl;
     p->prev = pre;
     p->next = cur;
     pre->next = p;
