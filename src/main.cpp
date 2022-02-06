@@ -491,6 +491,9 @@ void FMAlgorithm(){
                 else flag = true;
             }
             else {
+                while(abs(bcsz-acsz-2*b->size) >= error && b->to->next!=NULL){
+                    b = vc[b->to->next->id];
+                }
                 if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
                 else if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
                 else flag = true;
