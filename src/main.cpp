@@ -391,6 +391,7 @@ void updateGain(Cell * c){
 
 int iter = 0;
 
+// judge if the movement is valid or not
 bool isValid(bool set,int sz){
     if (set){
         return abs(aCellsize-bCellsize-2*sz) < error;
@@ -407,8 +408,7 @@ void FMAlgorithm(){
     k = 0;
     bestk = 0;
     cellstack.clear();
-    while (!flag && count++ < ccnt){
-        // 
+    while (!flag && count++ < ccnt){ 
         Cell * a = findMaxGain(0), * b = findMaxGain(1);
         int thred_n = (iter<=5)?3 : 10;
         
@@ -458,8 +458,7 @@ void FMAlgorithm(){
         iter++;
         
         restore();
-        cout << "Iter " << iter << endl;
-        cout << "Best Partial Sum of Gains: " << bestg << endl;
+        cout << "Iter " << iter << ", Gains: " << bestg << endl;
         cout << endl;
         if (iter>=40){
             return;
