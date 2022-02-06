@@ -40,7 +40,7 @@ class Cell {
     public:
         Cell(string & str, int & sz, bool st, int & id) : 
             name(str), size(sz), gain(0), pins(0), 
-            set(st), lock(0), to(NULL){
+            set(st), lock(0), nd(NULL){
             nd = new Node(id);
         }
         ~Cell (){}
