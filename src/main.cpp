@@ -538,6 +538,9 @@ void FMAlgorithm(){
         cout << "Best Partial Sum of Gains: " << bestg << endl;
         cout << "Total Sum of Gains (Should be 0): " << accg << endl;
         cout << endl;
+        if (pass>=40){
+            return;
+        }
         FMAlgorithm();
         
     }
