@@ -114,8 +114,8 @@ void parseArg(int argc, char ** argv){
     char* outputFile = argv[3];
     ifsCell.open(cellFile, ios::in);
     if (!ifsCell.is_open()){
-        cout << "Cannot open the cells file: " << cellFile << endl;		
-        exit();
+        cerr << "Cannot open the cells file: " << cellFile << endl;		
+        exit(-1);
     }
     else{
         parseCells(ifsCell);
