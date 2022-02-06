@@ -467,6 +467,7 @@ void FMAlgorithm(){
     bestk = 0;
     cellstack.clear();
     while (!flag && count++ < ccnt){
+        // 
         if (!bfccnt){
             Cell * a = findMaxGain(0);
             // check if balance
@@ -537,7 +538,7 @@ void adjust(){
 
 
 int main(int argc, char *argv[]){
-    
+    cout<<"hello"<<endl;
     ios_base::sync_with_stdio(false);
 	
     parseInput(argc, argv);
