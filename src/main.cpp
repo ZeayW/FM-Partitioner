@@ -469,19 +469,21 @@ void FMAlgorithm(){
     while (!flag && count++ < ccnt){
         // 
         if (!bfccnt){
+            cout<<"a "<<count<<" "<<afccnt<<endl;
             Cell * a = findMaxGain(0);
             // check if balance
             if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
             else flag = true;
         }
         else if (!afccnt){
+            cout<<"b "<<count<<" "<<afccnt<<endl;
             Cell * b = findMaxGain(1);
             if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
             else flag = true;
         }
         else {
             
-            cout<<!afccnt<<" "<<!bfccnt<<" "<< afccnt<<" "<<bfccnt<<" wierd, count = "<<count<<endl;
+            //cout<<!afccnt<<" "<<!bfccnt<<" "<< afccnt<<" "<<bfccnt<<" wierd, count = "<<count<<endl;
             Cell * a = findMaxGain(0), * b = findMaxGain(1);
             if (a->gain >= b->gain) {
                 if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
