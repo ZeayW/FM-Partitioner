@@ -109,7 +109,7 @@ void outputFile(ostream & out){
 
 
 void parseInput(int argc, char ** argv){
-
+    cout<<argv[1]<<argv[2]<<endl;
     char opt = 0;
     while ((opt = getopt(argc, argv, "c:n:o:h?")) != -1){
         switch (opt){
@@ -461,7 +461,6 @@ void FMAlgorithm(){
         restore();
         cout << "Iter " << iter << endl;
         cout << "Best Partial Sum of Gains: " << bestg << endl;
-        cout << "Total Sum of Gains (Should be 0): " << aGain << endl;
         cout << endl;
         if (iter>=40){
             return;
