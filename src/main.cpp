@@ -510,7 +510,7 @@ void FMAlgorithm(){
         else if (a==NULL){
             //Cell * b = findMaxGain(1);
             int n = 0;
-            while(abs(bcsz-acsz-2*b->size) >= error && b->to->next!=NULL && n++<=3){
+            while(abs(bcsz-acsz-2*b->size) >= error && b->to->next!=NULL ){
                 b = vc[b->to->next->id];
             }
             if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
@@ -520,7 +520,7 @@ void FMAlgorithm(){
             //Cell * a = findMaxGain(0);
             // check if balance
             int n = 0;
-            while(abs(acsz-bcsz-2*a->size) >= error && a->to->next!=NULL && n++<=3){
+            while(abs(acsz-bcsz-2*a->size) >= error && a->to->next!=NULL){
                 a = vc[a->to->next->id];
             }
             if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
