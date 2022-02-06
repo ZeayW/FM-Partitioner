@@ -1,5 +1,3 @@
-#include "net.h"
-#include "cell.h"
 #include <ctime>
 #include <iostream>
 #include <string>
@@ -14,6 +12,44 @@
 
 
 using namespace std;
+
+class Net {
+
+public:
+    Net(string str) : A(0), B(0), name(str){
+    } 
+    ~Net() {}
+    string name;
+    int A, B;
+    vector <int> cellList;
+};
+
+class Node
+{
+    friend class Cell;
+ 
+public:
+    Node(const int &info) : id(info), next(NULL), prev(NULL){}
+
+    int id;
+    Node *next, *prev; 
+}; 
+
+class Cell {
+    
+    public:
+        Cell(string & str, int & sz, bool st, int & id) : 
+            name(str), size(sz), gain(0), pins(0), 
+            set(st), lock(0), to(NULL){
+            to = new Node(id);
+        }
+        ~Cell (){}
+        string name;
+        int size, gain, pins;
+        bool set, lock;
+        std::vector <int> netList;
+        Node *to;
+};
 
 vector <int> cellstack;
 vector <Net*> nets, *bestnets;
