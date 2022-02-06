@@ -207,32 +207,6 @@ void reverse(){
     
 }
 
-void store(){
-    bestg = aGain;
-    bestacnnt = aCellCnt;
-    bestbcnnt = bCellCnt;
-    bestaCellsize = aCellsize;
-    bestbCellsize = bCellsize;
-    bestk = k;
-
-}
-
-
-
-void restore(){
-
-    k = bestk;
-    aCellCnt = bestacnnt;
-    bCellCnt = bestbcnnt;
-    aCellsize = bestaCellsize;
-    bCellsize = bestbCellsize;
-
-    reverse();
-    calAB();
-
-}
-
-
 void initGain(){
     for (int i = 0; i < ccnt; i++){
         cells[i]->gain = 0;
@@ -240,7 +214,12 @@ void initGain(){
     }
     
     aGain = 0;
-    store();
+    bestg = aGain;
+    bestacnnt = aCellCnt;
+    bestbcnnt = bCellCnt;
+    bestaCellsize = aCellsize;
+    bestbCellsize = bCellsize;
+    bestk = k;
 
     // for each cell, init its gain
     for (int i = 0; i < ccnt; i++){
@@ -385,7 +364,12 @@ void updateGain(Cell * c){
         aCellCnt++;
     }
     if (aGain > bestg)
-        store();
+        bestg = aGain;
+        bestacnnt = aCellCnt;
+        bestbcnnt = bCellCnt;
+        bestaCellsize = aCellsize;
+        bestbCellsize = bCellsize;
+        bestk = k;
     return;
 }
 
@@ -451,13 +435,18 @@ void FMAlgorithm(){
             else flag = true;
         }
         k++;
-    
     }
     
     if (bestg > 0 ) {
         iter++;   
-        restore();
-        //cout << "Iter " << iter << ", Gains: " << bestg << endl;
+        k = bestk;
+        aCellCnt = bestacnnt;
+        bCellCnt = bestbcnnt;
+        aCellsize = bestaCellsize;
+        bCellsize = bestbCellsize;
+        reverse();
+        calAB();
+        cout << "Iter " << iter << ", Gains: " << bestg << endl;
         if (iter>=40){
             return;
         }
@@ -488,7 +477,13 @@ int main(int argc, char *argv[]){
     tstart = clock();
     FMAlgorithm();
 	tend = clock();
-    restore();
+    k = bestk;
+    aCellCnt = bestacnnt;
+    bCellCnt = bestbcnnt;
+    aCellsize = bestaCellsize;
+    bCellsize = bestbCellsize;
+    reverse();
+    calAB();
     cutsz = 0;
     for (int i = 0; i < ncnt; i++)
         if (nets[i]->A && nets[i]->B) cutsz++;
