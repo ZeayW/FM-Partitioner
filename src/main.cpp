@@ -514,5 +514,6 @@ int main(int argc, char *argv[]){
     of.close();
     cout << endl;
     cout << "FM Algorithm Run Time: " << (double)(tend-tstart)/CLOCKS_PER_SEC << " sec\n";
+    cout <<"IO Run Time: "<< (double)clock()/CLOCKS_PER_SEC - (double)(tend-tstart)/CLOCKS_PER_SEC << " sec\n";
     cout << "Total Run Time: " << (double)clock()/CLOCKS_PER_SEC << " sec\n";
 }
