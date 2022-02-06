@@ -434,7 +434,7 @@ void FMAlgorithm(){
             if (a->gain >= b->gain) {
                 int n = 0;
                 
-                while(abs(aCellsize-bCellsize-2*a->size) >= error && a->to->next!=NULL && n++<=thred_n){
+                while( !isValid(true,a->size) && a->to->next!=NULL && n++<=thred_n){
                     a = cells[a->to->next->id];
                 }
                 if (isValid(true,a->size)) updateGain(a);
@@ -443,11 +443,11 @@ void FMAlgorithm(){
             }
             else {
                 int n = 0;
-                while(abs(bCellsize-aCellsize-2*b->size) >= error && b->to->next!=NULL && n++<=thred_n){
+                while( !isValid(false,b->size) && b->to->next!=NULL && n++<=thred_n){
                     b = cells[b->to->next->id];
                 }
-                if (abs(bCellsize-aCellsize-2*b->size) < error) updateGain(b);
-                else if (abs(aCellsize-bCellsize-2*a->size) < error) updateGain(a);
+                if (!isValid(false,b->size)) updateGain(b);
+                else if (!isValid(true,a->size)) updateGain(a);
                 else flag = true;
             }
         }
