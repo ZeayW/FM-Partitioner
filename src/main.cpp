@@ -481,11 +481,18 @@ void FMAlgorithm(){
     while (!flag && count++ < ccnt){
         // 
         Cell * a = findMaxGain(0), * b = findMaxGain(1);
-        
+        int thred_n;
+        if (pass>5){
+            thred_n = 5;
+        }
+        else{
+            thred_n = 3;
+        }
         if (a!=NULL && b!=NULL){
             if (a->gain >= b->gain) {
                 int n = 0;
-                while(abs(acsz-bcsz-2*a->size) >= error && a->to->next!=NULL && n++<=3){
+                
+                while(abs(acsz-bcsz-2*a->size) >= error && a->to->next!=NULL && n++<=thred_n){
                     a = vc[a->to->next->id];
                 }
                 if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
@@ -494,7 +501,7 @@ void FMAlgorithm(){
             }
             else {
                 int n = 0;
-                while(abs(bcsz-acsz-2*b->size) >= error && b->to->next!=NULL && n++<=3){
+                while(abs(bcsz-acsz-2*b->size) >= error && b->to->next!=NULL && n++<=thred_n){
                     b = vc[b->to->next->id];
                 }
                 if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
