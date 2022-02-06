@@ -172,6 +172,12 @@ void move(Cell * c){
     insert_front(c);
 }
 
+void reverse(){
+    int i = cellstack.size()-1;
+    for (; i > k; i--)
+        cells[cellstack[i]]->set = !cells[cellstack[i]]->set;
+}
+
 // build the bucket list
 void buildbucketlist(){
     bucketlist[0].clear();
@@ -185,43 +191,6 @@ void buildbucketlist(){
     for (int i = 0; i < ccnt; i++)
         insert_front(cells[i]);
 }
-
-// find the cell with maximum gain
-Cell * findMaxGain(bool set){
-    int p = Pmax;
-    // find the max gain (find the first list that is not empty)
-    while (p >= -Pmax && bucketlist[set][p]->next == NULL){p--;}
-    // find the first cell with maximum gain
-    if (p<-Pmax){
-        return NULL;
-    }
-    Cell * ans = cells[bucketlist[set][p]->next->id];
-    return ans;
-}
-
-
-void reverse(){
-    int i = cellstack.size()-1;
-    for (; i > k; i--)
-        cells[cellstack[i]]->set = !cells[cellstack[i]]->set;
-    
-}
-
-
-
-void restore(){
-
-    k = bestk;
-    aCellCnt = bestacnnt;
-    bCellCnt = bestbcnnt;
-    aCellsize = bestaCellsize;
-    bCellsize = bestbCellsize;
-
-    reverse();
-    calAB();
-
-}
-
 
 void initGain(){
     for (int i = 0; i < ccnt; i++){
@@ -254,6 +223,19 @@ void initGain(){
         }
     }
     buildbucketlist();
+}
+
+// find the cell with maximum gain
+Cell * findMaxGain(bool set){
+    int p = Pmax;
+    // find the max gain (find the first list that is not empty)
+    while (p >= -Pmax && bucketlist[set][p]->next == NULL){p--;}
+    // find the first cell with maximum gain
+    if (p<-Pmax){
+        return NULL;
+    }
+    Cell * ans = cells[bucketlist[set][p]->next->id];
+    return ans;
 }
 
 //update all the gain of all the cells that are related to the base cell c
@@ -498,7 +480,7 @@ int main(int argc, char *argv[]){
     tstart = clock();
     FMAlgorithm();
 	tend = clock();
-    
+
     k = bestk;
     aCellCnt = bestacnnt;
     bCellCnt = bestbcnnt;
