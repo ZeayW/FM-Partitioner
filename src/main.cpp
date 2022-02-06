@@ -493,7 +493,7 @@ void FMAlgorithm(){
             }
             else {
                 int n = 0;
-                while(abs(bcsz-acsz-2*b->size) >= error && b->to->next!=NULL && n++<=2){
+                while(abs(bcsz-acsz-2*b->size) >= error && b->to->next!=NULL && n++<=4){
                     b = vc[b->to->next->id];
                 }
                 if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
