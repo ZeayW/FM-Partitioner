@@ -453,19 +453,19 @@ void FMAlgorithm(){
         }
         else if (a==NULL){
             int n = 0;
-            while(abs(bCellsize-aCellsize-2*b->size) >= error && b->to->next!=NULL ){
+            while( !isValid(false,b->size) && b->to->next!=NULL ){
                 b = cells[b->to->next->id];
             }
-            if (abs(bCellsize-aCellsize-2*b->size) < error) updateGain(b);
+            if (isValid(false,b->size)) updateGain(b);
             else flag = true;
         }
         else {
             // check if balance
             int n = 0;
-            while(abs(aCellsize-bCellsize-2*a->size) >= error && a->to->next!=NULL){
+            while( !isValid(true,a->size) && a->to->next!=NULL){
                 a = cells[a->to->next->id];
             }
-            if (abs(aCellsize-bCellsize-2*a->size) < error) updateGain(a);
+            if (isValid(true,a->size)) updateGain(a);
             else flag = true;
         }
         k++;
