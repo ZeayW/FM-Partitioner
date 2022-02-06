@@ -22,7 +22,7 @@ vector <Cell*> cells, *bestcells;
 int k = 0, bestk;
 bool *bestset;
 vector <int> bestA, bestB;
-map <string, int> mc, mn; 
+map <string, int> cell2id, net2id; 
 int ccnt = 0, ncnt = 0;
 
 int cutSize = 0;
@@ -40,7 +40,7 @@ void parseCells(istream & in){
     string str;
     int size;
     while (in >> str >> size){
-        mc[str] = ccnt;
+        cell2id[str] = ccnt;
         if (aCellsize <= bCellsize){
             Cell *c = new Cell(str, size, 0, ccnt);
             cells.push_back(c);
@@ -75,17 +75,17 @@ void parseNets(istream & in){
     string str, tmp;
     while (in >> tmp){ // NET
         in >> str;  // nxxx
-        mn[str] = ncnt;
+        net2id[str] = ncnt;
         in >> tmp;  // {
         Net *n = new Net(str);
         nets.push_back(n);
         while (in >> tmp && tmp[0] != '}'){
-            vector <int> & l = cells[mc[tmp]]->netList;
+            vector <int> & l = cells[cell2id[tmp]]->netList;
             if (!l.size() || l[l.size()-1] != ncnt) {
                 l.push_back(ncnt);
-                cells[mc[tmp]]->pins++;
-                nets[ncnt]->cellList.push_back(mc[tmp]);
-                if (cells[mc[tmp]]->set) nets[ncnt]->B++;
+                cells[cell2id[tmp]]->pins++;
+                nets[ncnt]->cellList.push_back(cell2id[tmp]);
+                if (cells[cell2id[tmp]]->set) nets[ncnt]->B++;
                 else nets[ncnt]->A++;
             }
         }
