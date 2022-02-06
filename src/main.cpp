@@ -486,7 +486,7 @@ void FMAlgorithm(){
             thred_n = 5;
         }
         else{
-            thred_n = 3;
+            thred_n = 5;
         }
         if (a!=NULL && b!=NULL){
             if (a->gain >= b->gain) {
