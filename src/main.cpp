@@ -30,7 +30,7 @@ ifstream ifc, ifn;
 ofstream of;
 double error; 
 int totalCellsize = 0, aCellsize = 0, bCellsize = 0, cs = 0;
-int aCellCnt = 0, bCellCnt = 0, accg = 0, bestg = 0;
+int aCellCnt = 0, bCellCnt = 0, aGain = 0, bestg = 0;
 
 int bestacnnt = 0, bestbcnnt = 0, bestaCellsize = 0, bestbCellsize = 0;
 int Pmax = 0;
@@ -279,7 +279,7 @@ void reverse(){
 }
 
 void store(){
-    bestg = accg;
+    bestg = aGain;
     //bestvc = &vc;
     //bestvn = &vn;
     bestacnnt = aCellCnt;
@@ -319,7 +319,7 @@ void initGain(){
         vc[i]->lock = 0;
     }
     
-    accg = 0;
+    aGain = 0;
     store();
 
     // for each cell, init its gain
@@ -343,7 +343,7 @@ void initGain(){
 
 //update all the gain of all the cells that are related to the base cell c
 void updateGain(Cell * c){
-    accg += c->gain;
+    aGain += c->gain;
 
     c->lock = true;
     int num = c->to->id;
@@ -464,7 +464,7 @@ void updateGain(Cell * c){
         bCellCnt--;
         aCellCnt++;
     }
-    if (accg > bestg)
+    if (aGain > bestg)
         store();
     return;
 }
@@ -531,7 +531,7 @@ void FMAlgorithm(){
         restore();
         cout << "Pass " << pass << endl;
         cout << "Best Partial Sum of Gains: " << bestg << endl;
-        cout << "Total Sum of Gains (Should be 0): " << accg << endl;
+        cout << "Total Sum of Gains (Should be 0): " << aGain << endl;
         cout << endl;
         if (pass>=40){
             return;
