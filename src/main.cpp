@@ -207,6 +207,32 @@ void reverse(){
     
 }
 
+void store(){
+    bestg = aGain;
+    bestacnnt = aCellCnt;
+    bestbcnnt = bCellCnt;
+    bestaCellsize = aCellsize;
+    bestbCellsize = bCellsize;
+    bestk = k;
+
+}
+
+
+
+void restore(){
+
+    k = bestk;
+    aCellCnt = bestacnnt;
+    bCellCnt = bestbcnnt;
+    aCellsize = bestaCellsize;
+    bCellsize = bestbCellsize;
+
+    reverse();
+    calAB();
+
+}
+
+
 void initGain(){
     for (int i = 0; i < ccnt; i++){
         cells[i]->gain = 0;
@@ -214,12 +240,7 @@ void initGain(){
     }
     
     aGain = 0;
-    bestg = aGain;
-    bestacnnt = aCellCnt;
-    bestbcnnt = bCellCnt;
-    bestaCellsize = aCellsize;
-    bestbCellsize = bCellsize;
-    bestk = k;
+    store();
 
     // for each cell, init its gain
     for (int i = 0; i < ccnt; i++){
@@ -364,12 +385,7 @@ void updateGain(Cell * c){
         aCellCnt++;
     }
     if (aGain > bestg)
-        bestg = aGain;
-        bestacnnt = aCellCnt;
-        bestbcnnt = bCellCnt;
-        bestaCellsize = aCellsize;
-        bestbCellsize = bCellsize;
-        bestk = k;
+        store();
     return;
 }
 
@@ -435,17 +451,13 @@ void FMAlgorithm(){
             else flag = true;
         }
         k++;
+    
     }
     
     if (bestg > 0 ) {
-        iter++;   
-        k = bestk;
-        aCellCnt = bestacnnt;
-        bCellCnt = bestbcnnt;
-        aCellsize = bestaCellsize;
-        bCellsize = bestbCellsize;
-        reverse();
-        calAB();
+        iter++;
+        
+        restore();
         cout << "Iter " << iter << ", Gains: " << bestg << endl;
         if (iter>=40){
             return;
@@ -477,13 +489,7 @@ int main(int argc, char *argv[]){
     tstart = clock();
     FMAlgorithm();
 	tend = clock();
-    k = bestk;
-    aCellCnt = bestacnnt;
-    bCellCnt = bestbcnnt;
-    aCellsize = bestaCellsize;
-    bCellsize = bestbCellsize;
-    reverse();
-    calAB();
+    restore();
     cutsz = 0;
     for (int i = 0; i < ncnt; i++)
         if (nets[i]->A && nets[i]->B) cutsz++;
