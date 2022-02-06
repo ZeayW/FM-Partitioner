@@ -29,10 +29,10 @@ int cutSize = 0;
 ifstream ifc, ifn;
 ofstream of;
 double error; 
-int tcsz = 0, acsz = 0, bcsz = 0, cs = 0;
+int totalCellsize = 0, aCellsize = 0, bCellsize = 0, cs = 0;
 int aCellCnt = 0, bCellCnt = 0, accg = 0, bestg = 0;
 
-int bestacnnt = 0, bestbcnnt = 0, bestacsz = 0, bestbcsz = 0;
+int bestacnnt = 0, bestbcnnt = 0, bestaCellsize = 0, bestbCellsize = 0;
 int Pmax = 0;
 double tstart, tend;
 map <int, Node*> blist[2];
@@ -42,19 +42,19 @@ void parseCells(istream & in){
     int size;
     while (in >> str >> size){
         mc[str] = ccnt;
-        if (acsz <= bcsz){
+        if (aCellsize <= bCellsize){
             Cell *c = new Cell(str, size, 0, ccnt);
             vc.push_back(c);
-            acsz += size;
+            aCellsize += size;
             aCellCnt++;
         }
         else {
             Cell *c = new Cell(str, size, 1, ccnt);
             vc.push_back(c);
-            bcsz += size;
+            bCellsize += size;
             bCellCnt++;
         }
-        tcsz += size; 
+        totalCellsize += size; 
         ccnt++;
     }
 }
@@ -117,10 +117,10 @@ void test(){
     }
     cout << "...\n";
     cout << "# of cells = " << ccnt << endl;
-    cout << "Total Cell Size = " << tcsz << endl;
-    cout << "Set A Size = " << acsz << endl;
-    cout << "Set B Size = " << bcsz << endl;
-    cout << "|A - B| = " << abs(acsz-bcsz) << endl;
+    cout << "Total Cell Size = " << totalCellsize << endl;
+    cout << "Set A Size = " << aCellsize << endl;
+    cout << "Set B Size = " << bCellsize << endl;
+    cout << "|A - B| = " << abs(aCellsize-bCellsize) << endl;
     cout << "...\n";
     for (int i = 0; i < ncnt; i++){
         cout << vn[i]->name << ' ';
@@ -142,7 +142,7 @@ void countPmax(){
 
 // error = n/10
 void countError(){
-    error = (double) tcsz/10;
+    error = (double) totalCellsize/10;
 }
 
 void outputFile(ostream & out){
@@ -284,8 +284,8 @@ void store(){
     //bestvn = &vn;
     bestacnnt = aCellCnt;
     bestbcnnt = bCellCnt;
-    bestacsz = acsz;
-    bestbcsz = bcsz;
+    bestaCellsize = aCellsize;
+    bestbCellsize = bCellsize;
     //bestset.clear();
     //bestA.clear();
     //bestB.clear();
@@ -303,8 +303,8 @@ void restore(){
     //cout << k;
     aCellCnt = bestacnnt;
     bCellCnt = bestbcnnt;
-    acsz = bestacsz;
-    bcsz = bestbcsz;
+    aCellsize = bestaCellsize;
+    bCellsize = bestbCellsize;
     //for (int i = 0 ; i < ccnt; i++)
     //    vc[i]->set = bestset[i];
     reverse();
@@ -407,8 +407,8 @@ void updateGain(Cell * c){
 
         // remove the base cell
         remove(c);
-        acsz -= c->size;
-        bcsz += c->size;
+        aCellsize -= c->size;
+        bCellsize += c->size;
         aCellCnt--;
         bCellCnt++;
     }
@@ -459,8 +459,8 @@ void updateGain(Cell * c){
             }
         }
         remove(c);
-        bcsz -= c->size;
-        acsz += c->size;
+        bCellsize -= c->size;
+        aCellsize += c->size;
         bCellCnt--;
         aCellCnt++;
     }
@@ -487,38 +487,38 @@ void FMAlgorithm(){
             if (a->gain >= b->gain) {
                 int n = 0;
                 
-                while(abs(acsz-bcsz-2*a->size) >= error && a->to->next!=NULL && n++<=thred_n){
+                while(abs(aCellsize-bCellsize-2*a->size) >= error && a->to->next!=NULL && n++<=thred_n){
                     a = vc[a->to->next->id];
                 }
-                if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
-                else if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
+                if (abs(aCellsize-bCellsize-2*a->size) < error) updateGain(a);
+                else if (abs(bCellsize-aCellsize-2*b->size) < error) updateGain(b);
                 else flag = true;
             }
             else {
                 int n = 0;
-                while(abs(bcsz-acsz-2*b->size) >= error && b->to->next!=NULL && n++<=thred_n){
+                while(abs(bCellsize-aCellsize-2*b->size) >= error && b->to->next!=NULL && n++<=thred_n){
                     b = vc[b->to->next->id];
                 }
-                if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
-                else if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
+                if (abs(bCellsize-aCellsize-2*b->size) < error) updateGain(b);
+                else if (abs(aCellsize-bCellsize-2*a->size) < error) updateGain(a);
                 else flag = true;
             }
         }
         else if (a==NULL){
             int n = 0;
-            while(abs(bcsz-acsz-2*b->size) >= error && b->to->next!=NULL ){
+            while(abs(bCellsize-aCellsize-2*b->size) >= error && b->to->next!=NULL ){
                 b = vc[b->to->next->id];
             }
-            if (abs(bcsz-acsz-2*b->size) < error) updateGain(b);
+            if (abs(bCellsize-aCellsize-2*b->size) < error) updateGain(b);
             else flag = true;
         }
         else {
             // check if balance
             int n = 0;
-            while(abs(acsz-bcsz-2*a->size) >= error && a->to->next!=NULL){
+            while(abs(aCellsize-bCellsize-2*a->size) >= error && a->to->next!=NULL){
                 a = vc[a->to->next->id];
             }
-            if (abs(acsz-bcsz-2*a->size) < error) updateGain(a);
+            if (abs(aCellsize-bCellsize-2*a->size) < error) updateGain(a);
             else flag = true;
         }
         k++;
@@ -544,25 +544,25 @@ void FMAlgorithm(){
 
 // adjust the sets to be balanced
 void adjust(){
-    if (abs(acsz-bcsz) < error) return;
+    if (abs(aCellsize-bCellsize) < error) return;
     else {
         cout << "...Need balancing.\n";
         int i;
-        for (i = 0; i < ccnt && abs(acsz-bcsz) >= error; i++){
+        for (i = 0; i < ccnt && abs(aCellsize-bCellsize) >= error; i++){
             Cell * c = vc[i];
             // if |A|>|B| and c belong to A , then move c to B
-            if (acsz > bcsz && !c->set){
-                acsz -= c->size;
-                bcsz += c->size;
+            if (aCellsize > bCellsize && !c->set){
+                aCellsize -= c->size;
+                bCellsize += c->size;
                 c->set = true;
             }
-            else if (acsz < bcsz && c->set){
-                acsz += c->size;
-                bcsz -= c->size;
+            else if (aCellsize < bCellsize && c->set){
+                aCellsize += c->size;
+                bCellsize -= c->size;
                 c->set = false;
             }
         }
-        if (i == ccnt && abs(acsz-bcsz) >= error) {
+        if (i == ccnt && abs(aCellsize-bCellsize) >= error) {
             cerr << "(ERROR)...This testcase can never be balanced!\n";
             //exit(EXIT_FAILURE);
         }
@@ -590,8 +590,8 @@ int main(int argc, char *argv[]){
     countPmax();
     adjust();
     
-    bestacsz = acsz;
-    bestbcsz = bcsz;
+    bestaCellsize = aCellsize;
+    bestbCellsize = bCellsize;
     tstart = clock();
     FMAlgorithm();
 	tend = clock();
