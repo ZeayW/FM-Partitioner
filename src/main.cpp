@@ -109,34 +109,19 @@ void outputFile(ostream & out){
 
 
 void parseInput(int argc, char ** argv){
-    cout<<argv[1]<<argv[2]<<endl;
-    char opt = 0;
-    while ((opt = getopt(argc, argv, "c:n:o:h?")) != -1){
-        switch (opt){
-            case 'c':
-                ifsCell.open(optarg, ios::in);
-                if (!ifsCell.is_open())
-                    cout << "Cannot open the cells file at [-" << opt << ' ' << optarg << ']' << endl;		
-                break;
-            case 'n':
-                ifsNet.open(optarg, ios::in);
-                if (!ifsNet.is_open())
-                    cout << "Cannot open the nets file at [-" << opt << ' ' << optarg << ']' << endl;		
-                break;
-            case 'o':
-                of.open(optarg, ios::out);
-                if (!of.is_open()) {
-                    cout << "Cannot open the output file at [-" << opt << ' ' << optarg << ']' << endl;		
-                }
-                break;
-            case 'h' :
-			case '?' :
-            default:
-                cerr << "Usage: " << argv[0] << " -c <cells file name> -n <nets file name> -o <output file name>\n";
-                exit(EXIT_FAILURE);
-        }
-    }
-
+    cellFile = argv[1];
+    netFile = argv[2];
+    outputFile = argv[3];
+    ifsCell.open(optarg, ios::in);
+    if (!ifsCell.is_open())
+        cout << "Cannot open the cells file at [-" << opt << ' ' << optarg << ']' << endl;		
+    ifsNet.open(optarg, ios::in);
+    if (!ifsNet.is_open())
+        cout << "Cannot open the nets file at [-" << opt << ' ' << optarg << ']' << endl;		
+    of.open(optarg, ios::out);
+    if (!of.is_open())
+        cout << "Cannot open the output file at [-" << opt << ' ' << optarg << ']' << endl;		
+    
 }
 
 void remove(Cell * c){
