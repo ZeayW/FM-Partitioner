@@ -108,7 +108,7 @@ void outputFile(ostream & out){
 }
 
 
-void parseArg(int argc, char ** argv){
+void parse(int argc, char ** argv){
     char* cellFile = argv[1];
     char* netFile = argv[2];
     char* outputFile = argv[3];
@@ -124,7 +124,7 @@ void parseArg(int argc, char ** argv){
 
     ifsNet.open(netFile, ios::in);
     if (!ifsNet.is_open()){
-        cerr << "Cannot open the nets file at [-" << netFile << endl;	
+        cerr << "Cannot open the nets file: " << netFile << endl;	
         exit(-1);
     }
     else{
@@ -134,7 +134,7 @@ void parseArg(int argc, char ** argv){
 
     of.open(outputFile, ios::out);
     if (!of.is_open())
-        cerr << "Cannot open the output file at [-" << outputFile << endl;		
+        cerr << "Cannot open the output file: " << outputFile << endl;		
     
 }
 
@@ -472,12 +472,9 @@ void FMAlgorithm(){
 
 
 int main(int argc, char *argv[]){
-    cout<<"hello"<<endl;
-    ios_base::sync_with_stdio(false);
-	
-    parseArg(argc, argv);
+   
+    parse(argc, argv);
 
-    //bestset = new bool[ccnt]();
     cutsz = 0;
     for (int i = 0; i < ncnt; i++)
         if (nets[i]->A && nets[i]->B) cutsz++;
